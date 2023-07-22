@@ -4,14 +4,13 @@ async function resetPassword(event){
    try{
     const email=document.getElementById('email').value;
     
-    const  response=await axios.post('http://16.171.141.102:3000/password/forgot-password',{email});
+    const  response=await axios.post('http://13.49.61.220:3000/password/forgot-password',{email});
     console.log(response.data);
     if(response.status==200){
       alert("Email is sent succesfully check your email box");
     }else{
       alert("Error email is not sent");
     }
-
    }catch(err){
     console.log(err, "post email is not working")
    }

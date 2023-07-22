@@ -2,12 +2,14 @@ const Expence = require('../model/expencemodel');
 const User = require('../model/usermodel');
 const userdb = require('../dataBase/userDatabase');
 const S3Service=require('../service/s3service');
+const { where } = require('sequelize');
 
 const downloadExp=async (req,res,getData)=>{
 
   try{
-const getExpen=await Expence.findAll();
+const getExpen=await Expence.findAll({where:{userId:req.user.dataValues.Id}});
 const userId=req.user.dataValues.Id;
+
 const stingfideexpence=JSON.stringify(getExpen);
 const fileName=`Expence${userId}/${new Date()}.txt`;
 const fileUrl=await S3Service.uploadToS3(stingfideexpence,fileName)

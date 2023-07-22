@@ -23,7 +23,7 @@ exports.getForgetpassword= async (req, res)=>{
           isActive: true,
           UserId: user.dataValues.Id,
         })
-        const resetUrl = `http://localhost:3000/password/reset-password/${forgotPasswordRequest.id}`;
+        const resetUrl = `http://13.49.61.220:3000/password/reset-password/${forgotPasswordRequest.id}`;
         const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
         sendSmtpEmail.subject = 'Password Reset';
         sendSmtpEmail.htmlContent = `Click the following link to reset your password: ${resetUrl}`;

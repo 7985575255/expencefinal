@@ -19,7 +19,7 @@ async function postData(obj) {
   try {
     const token = localStorage.getItem("token");
     const response = await axios.post(
-      "http://16.171.141.102:3000/user/expence/add-data",
+      "http://13.49.61.220:3000/user/expence/add-data",
       obj,
       { headers: { Authorization: token } }
     );
@@ -29,30 +29,41 @@ async function postData(obj) {
   }
 }
 
-// show data on screen
 async function showUserDataOnScreen(user) {
   try {
-     let fo = document.getElementById("food");
-     document.getElementById("product").value = "";
-     document.getElementById("price").value = "";
-   
-      let childhtml = `<li id=${user.Id}>${user.product}-${user.price}-${user.option}
-            <button onclick= deleteUser('${user.Id}','${user.price}','${user.option}')>Delete Item</button>
-            </li>`;
-      fo.innerHTML = fo.innerHTML + childhtml;
+    let fo = document.getElementById("food");
+    document.getElementById("product").value = "";
+    document.getElementById("price").value = "";
+  
+    if (user && user.Id && user.product && user.price && user.option) {
+      let listItem = document.createElement('li');
+      listItem.id = user.Id;
+      listItem.textContent = `${user.product}-${user.price}-${user.option}`;
+      
+      let deleteButton = document.createElement('button');
+      deleteButton.textContent = 'Delete Item';
+      deleteButton.addEventListener('click', () => {
+        deleteUser(user.Id, user.price);
+      });
+
+      listItem.appendChild(deleteButton);
+      fo.appendChild(listItem);
+    } else {
+      console.error("Invalid 'user' object or missing properties.");
+    }
   } catch (error) {
     console.log(error);
   }
 }
 
 
-
 //delete userfuncton
-async function deleteUser(Id, price, option) {
+async function deleteUser(Id, price) {
   try {
+    console.log("Delete function calling");
     const token = localStorage.getItem("token");
     const del = await axios.delete(
-      `http://16.171.141.102:3000/user/expence/delete/${Id}?price=${price}`,
+      `http://13.49.61.220:3000/user/expence/delete/${Id}?price=${price}`,
       {
         headers: { Authorization: token },
       }
@@ -76,13 +87,15 @@ async function removeUserFromScreen(user_id) {
 // show data when page is refresh
 window.addEventListener("DOMContentLoaded", () => {
   const token = localStorage.getItem("token");
-  axios.get("http://16.171.141.102:3000/user/expence/get-data", {
+  axios.get("http://13.49.61.220:3000/user/expence/get-data", {
       headers: { Authorization: token },
     })
     .then((response) => {
         createPaginationButtons(response.data.length,response.data);
         showPageContent(response.data,1)
-      
+      // for(let i=0; i<response.data.length; i++){
+      //   showUserDataOnScreen(response.data[i]);
+      // }
     })
     .catch((err) => {
       console.log(err);
@@ -93,25 +106,26 @@ window.addEventListener("DOMContentLoaded", () => {
     premiumUser();
   }
 });
-// pagination
+//pagination
 let currentPage =1;
 let itemsPerPage=5;
 const paginationContainer = document.getElementById("pagination");
 
-function showPageContent(data,page) {
+function showPageContent(data, page) {
   currentPage = page;
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const fo=document.getElementById('food');
-  fo.innerHTML="";
+  const endIndex = Math.min(startIndex + itemsPerPage, data.length);
+  const fo = document.getElementById('food');
+  fo.innerHTML = "";
 
-  for(let i=startIndex; i<endIndex; i++){
-    showUserDataOnScreen(data[i]);
+  for (let i = startIndex; i < endIndex; i++) {
+    if (data[i]) {
+      showUserDataOnScreen(data[i]);
+    }
   }
-
 }
 
-// Function to create pagination buttons
+//Function to create pagination buttons
 function createPaginationButtons(totalexp,data) {
   paginationContainer.innerHTML = "";
   let totalPages=Math.ceil(totalexp/itemsPerPage);
@@ -137,48 +151,27 @@ showPageContent(currentPage);
 
 //premium user
 function premiumUser() {
-  document.getElementById("PremiumButton").style.visibility = "hidden";
-  leaderbordButton();
-}
-
-// leader bord button
-function leaderbordButton() {
-  let lederbordDiv = document.getElementById("leaderbord");
-  let button = document.createElement("button");
   const bodyElement = document.body;
-  button.innerHTML = "Leaderbord";
-  button.style.padding = "10px 20px";
-  button.style.backgroundColor = "blue";
-  button.style.color = "white";
-  button.style.border = "none";
-  button.style.borderRadius = "5px";
-  button.style.fontSize = "16px";
-  button.style.cursor = "pointer";
-  bodyElement.style.backgroundColor = '#f5bc42';
-  lederbordDiv.appendChild(button);
-  button.addEventListener("click", showLeaderbordData);
+  bodyElement.style.backgroundColor = 'yellow'
+
+  document.getElementById("PremiumButton").style.visibility = "hidden";
+
+ let buttonled=document.getElementById('leaderbord');
+  buttonled.addEventListener("click", showLeaderbordData);
+  buttonled.style.display = 'block';
   //Download functionalty
 
-  let downloaddiv=document.getElementById('download');
-  let downloadbutton=document.createElement('button');
-  downloadbutton.innerHTML='Download Expense';
-  downloaddiv.appendChild(downloadbutton);
-  downloadbutton.style.padding = "10px 20px";
-  downloadbutton.style.backgroundColor = "blue";
-  downloadbutton.style.color = "white";
-  downloadbutton.style.border = "none";
-  downloadbutton.style.borderRadius = "5px";
-  downloadbutton.style.fontSize = "16px";
-  downloadbutton.style.cursor = "pointer";
-  bodyElement.style.backgroundColor = '#f5bc42';
+   let downloadbutton=document.getElementById('download');
   downloadbutton.addEventListener("click",downloadExpence);
-
+  downloadbutton.style.display = 'block';
 }
+
+ 
 ///Download Expence api call
 async function downloadExpence(){
   const token = localStorage.getItem("token");
   try{
-  let response=await axios.get('http://16.171.141.102:3000/user/downloadexpense', { headers: { Authorization: token } })
+  let response=await axios.get('http://13.49.61.220:3000/user/downloadexpense', { headers: { Authorization: token } })
       if(response.status==200){
         window.location.href = response.data.fileUrl;
       }else{
@@ -193,7 +186,7 @@ async function downloadExpence(){
 
 document.getElementById("PremiumButton").onclick = async function (e) {
   const token = localStorage.getItem("token");
-  const response = await axios.get("http://16.171.141.102:3000/purchase/premiumfeatures",
+  const response = await axios.get("http://13.49.61.220:3000/purchase/premiumfeatures",
   { headers: { Authorization: token} });
   console.log(response)
  
@@ -209,7 +202,7 @@ document.getElementById("PremiumButton").onclick = async function (e) {
     handler: async function (response) {
       console.log(response);
       try {
-        const ans = await axios.post("http://16.171.141.102:3000/purchase/updatetransactionstatus",
+        const ans = await axios.post("http://13.49.61.220:3000/purchase/updatetransactionstatus",
           {
             order_id: options.order_id,
             payment_id: response.razorpay_payment_id,
@@ -257,7 +250,7 @@ async function showLeaderbordData() {
     const token = localStorage.getItem("token");
   try {
 
-    const response = await axios.get("http://16.171.141.102:3000/get/leaderbordata", { headers: { Authorization: token }});
+    const response = await axios.get("http://13.49.61.220:3000/get/leaderbordata", { headers: { Authorization: token }});
     let id=1;
     let parent =document.getElementById('showleaderbord');
     parent.innerHTML="";
@@ -285,3 +278,18 @@ async function showLeaderborDataOnScreen(element,id){
     console.log(err)
    }
 }
+
+
+//logout function
+
+function clearTokenFromLocalStorage() {
+  localStorage.removeItem('token');
+}
+
+function logout() {
+  clearTokenFromLocalStorage();
+  window.location.href="./login.html";
+}
+
+const logoutButton = document.getElementById('logout-btn');
+logoutButton.addEventListener('click', logout);

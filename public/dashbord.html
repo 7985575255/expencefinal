@@ -73,9 +73,10 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 </head>
 <body>
-    <div class="navbar">  <a href="#">Logout</a>
-        
-        <a href="#">Contact Us</a>
+    <div class="navbar"><a type="button" id="logout-btn">Logout</a>
+        <a type="button" id="leaderbord" style="display: none;">Leaderbord</a>
+        <a type="button" id="download" style="display: none">DownloadExp</a>
+        <a href="./contactUs.html">Contact Us</a>
         <a type="button" id="PremiumButton"> Buy Premium</a>
         <a href="#" id="home">Home</a>
         
@@ -95,10 +96,12 @@
     <button type="submit" id="submit">Add Item</button>
   
   <h3 id="food">Expenses Item-:</h3> <br>
+  <ul id="food"></ul>
   <div id="pagination"> </div>
 
-   <div id="leaderbord"></div><br>
-   <div id="download"></div>
+   <!-- <div id="leaderbord"></div><br>
+   <div id="download"></div> -->
+
 
   <br>
   <h3 id="showleaderbord"></h3>

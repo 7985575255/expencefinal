@@ -1,4 +1,4 @@
- async function registeruser(event){
+document.getElementById('form').addEventListener('submit',  async function(event) {
     event.preventDefault();
     let name=document.getElementById('name').value;
     let email=document.getElementById('email').value;
@@ -7,11 +7,11 @@
     const obj={name,email,password};
     console.log(obj)
     try{
-        const response=await axios.post('http://16.171.141.102:3000/user/registeruser', obj);
+        const response=await axios.post('http://13.49.61.220:3000/user/registeruser', obj);
         if(response.status==201){
             window.location.href="./login.html";
         }
     }catch(err){
         console.log(err)
     }
-}
+})
